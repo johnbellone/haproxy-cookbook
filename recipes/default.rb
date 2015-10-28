@@ -4,7 +4,7 @@
 #
 # Copyright 2015, Bloomberg Finance L.P.
 #
-include_recipe 'cpu::affinity'
+include_recipe 'cpu::affinity', 'firewall::default'
 
 node.default['sysctl']['params']['net']['core']['somaxconn'] = 10_000
 node.default['sysctl']['params']['net']['ipv4']['ip_local_port_range'] = '1024 65023'
@@ -32,4 +32,13 @@ cpu_affinity "Set CPU affinity for #{service.name}" do
   pid service.pid_file
   cpu 0
   subscribes :set, "haproxy_service[#{service.name}]"
+end
+
+# Allow the daemon to run as a system account instead of root.
+firewall_rule 'http' do
+  protocol :tcp
+  port [80, 443]
+  redirect_port [8080, 8443]
+  action :redirect
+  only_if { node['firewall']['allow_http'] }
 end
