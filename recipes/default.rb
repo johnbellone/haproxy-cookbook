@@ -37,8 +37,16 @@ end
 # Allow the daemon to run as a system account instead of root.
 firewall_rule 'http' do
   protocol :tcp
-  port [80, 443]
-  redirect_port [8080, 8443]
-  action :redirect
+  port 80
+  redirect_port 8080
+  command :redirect
   only_if { node['firewall']['allow_http'] }
+end
+
+firewall_rule 'https' do
+  protocol :tcp
+  port 443
+  redirect_port 8443
+  command :redirect
+  only_if { node['firewall']['allow_https'] }
 end

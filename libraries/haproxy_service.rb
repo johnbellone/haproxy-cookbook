@@ -40,6 +40,7 @@ module HaproxyCookbook
       include PoiseService::ServiceMixin
 
       private
+
       def service_options(service)
         service.command(new_resource.command)
         service.user(new_resource.user)
